@@ -1,71 +1,44 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { AuthShell } from "@/components/sg/AuthShell";
-import { getSessionUser, isValidEmail, signIn } from "@/lib/auth";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { getSessionUser } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sign In — SiteGuard OS" },
-      { name: "description", content: "Sign in to the SiteGuard OS gatehouse." },
-      { property: "og:title", content: "Sign In — SiteGuard OS" },
-      { property: "og:description", content: "Sign in to the SiteGuard OS gatehouse." },
+      { title: "SiteGuard OS" },
+      {
+        name: "description",
+        content: "SiteGuard OS — digital gatehouse and site compliance for construction.",
+      },
+      { property: "og:title", content: "SiteGuard OS" },
+      {
+        property: "og:description",
+        content: "SiteGuard OS — digital gatehouse and site compliance for construction.",
+      },
     ],
   }),
-  component: SignInPage,
+  ssr: false,
+  component: RootIndexPage,
 });
 
-function SignInPage() {
+function RootIndexPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (getSessionUser()) navigate({ to: "/dashboard" });
+    const user = getSessionUser();
+    if (user) {
+      navigate({ to: "/dashboard", replace: true });
+    } else {
+      navigate({ to: "/signup", replace: true });
+    }
   }, [navigate]);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    if (!email || !password) return setError("Enter your email and password.");
-    if (!isValidEmail(email)) return setError("Enter a valid email address.");
-    setLoading(true);
-    try {
-      await signIn(email, password);
-      navigate({ to: "/dashboard" });
-    } catch (err) {
-      setError(err instanceof Error && err.message === "Invalid email or password." ? err.message : "Could not sign in. Please try again.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
-    <AuthShell title="Sign in" subtitle="Access the SiteGuard gatehouse.">
-      <form onSubmit={submit} className="space-y-5">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email Address</Label>
-          <Input id="email" type="email" className="h-11" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" className="h-11" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </div>
-        {error && <p className="rounded-md bg-danger-soft px-3 py-2 text-sm font-medium text-danger">{error}</p>}
-        <Button type="submit" size="lg" className="h-12 w-full text-base" disabled={loading}>
-          {loading ? "Signing in…" : "Sign In"}
-        </Button>
-      </form>
-      <p className="mt-6 text-sm text-muted-foreground">
-        New to SiteGuard?{" "}
-        <Link to="/signup" className="font-semibold text-foreground underline underline-offset-4">Create Account</Link>
-      </p>
-    </AuthShell>
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-3">
+        <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <p className="text-sm font-medium text-muted-foreground">Redirecting to SiteGuard OS…</p>
+      </div>
+    </div>
   );
 }

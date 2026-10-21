@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppGatehouseRouteImport } from './routes/_app/gatehouse'
@@ -34,6 +36,16 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -114,6 +126,8 @@ const AppPeopleIdRoute = AppPeopleIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AppDashboardRoute
   '/gatehouse': typeof AppGatehouseRoute
@@ -132,6 +146,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AppDashboardRoute
   '/gatehouse': typeof AppGatehouseRoute
@@ -152,6 +168,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/gatehouse': typeof AppGatehouseRoute
@@ -172,6 +190,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
+    | '/signin'
     | '/signup'
     | '/dashboard'
     | '/gatehouse'
@@ -190,6 +210,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
+    | '/signin'
     | '/signup'
     | '/dashboard'
     | '/gatehouse'
@@ -209,6 +231,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/login'
+    | '/signin'
     | '/signup'
     | '/_app/dashboard'
     | '/_app/gatehouse'
@@ -229,6 +253,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
 }
 
@@ -246,6 +272,20 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -395,6 +435,8 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
+  SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
